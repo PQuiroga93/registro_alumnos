@@ -10,6 +10,7 @@ const PORT = 5001;
 const API_KEY = '12345ABCDEF';
 
 // Middleware
+//otro comentario 
 app.use(cors());
 app.use(express.json());
 
