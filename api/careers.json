@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Enfermería",
+    "category": "Tecnicatura",
+    "description": "Formación técnica en atención primaria de salud."
+  },
+  {
+    "id": 3,
+    "name": "Profesorado en Matemática",
+    "category": "Profesorado",
+    "description": "Formación docente para enseñar matemáticas en todos los niveles."
+  },
+  {
+    "id": 4,
+    "name": "Diseño Gráfico",
+    "category": "Carrera Corta",
+    "description": "Formación en creatividad, ilustración digital y diseño visual."
+  },
+  {
+    "id": 5,
+    "name": "Ciencia de Datos e Inteligencia Artificial",
+    "category": "Tecnicatura",
+    "description": "Análisis de datos, aprendizaje automático y herramientas de IA."
+  }
+]

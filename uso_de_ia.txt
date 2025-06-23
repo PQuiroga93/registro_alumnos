@@ -1,0 +1,10 @@
+# USO DE INTELIGENCIA ARTIFICIAL EN EL PROYECTO
+
+Utilicé ChatGPT para ayudarme a:
+- Estructurar las páginas HTML y aplicar Bootstrap.
+- Implementar funciones para consumir la API con JavaScript (fetch, POST, DELETE, etc.).
+- Redactar validaciones y mensajes con SweetAlert.
+- Organizar la estructura del frontend.
+
+Prompts útiles:
+- [Enviar archivos] para mostrarle el trabajo y pedirle códigos a partir de la estructura creada en html y la información obtenida por el profesor en la carpeta API y revisión de errores.

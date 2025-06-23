@@ -2,16 +2,16 @@
 
 ---
 
-## 📍 Introduction
+## 📍 Introducción
 
-This is an educational REST API for managing a simple database of students. It allows you to:
+Esta es una API REST educativa para gestionar una base de datos simple de estudiantes. Permite:
 
-- Register new students.
-- Query students by ID.
-- Query students by career.
-- Delete students.
+- Registrar nuevos estudiantes.
+- Consultar estudiantes por ID.
+- Consultar estudiantes por carrera.
+- Eliminar estudiantes.
 
-Student data is persisted using a local JSON file (`students.json`) to simulate a database.
+Los datos de los estudiantes se almacenan mediante un archivo JSON local (`students.json`) para simular una base de datos.
 
 ---
 
@@ -21,7 +21,8 @@ Student data is persisted using a local JSON file (`students.json`) to simulate 
 http://localhost:5001/api/students
 ```
 
-The server must be running on port `5001`.
+El servidor debe estar ejecutándose en el puerto
+ `5001`.
 
 ---
 
@@ -36,7 +37,15 @@ Authorization: Bearer 12345ABCDEF
 If the key is missing or incorrect, the server will respond with `401 Unauthorized`.
 
 ---
+Todas las solicitudes deben incluir una **Clave API** en el encabezado de autorización:
 
+```texto
+Autorización: Portador 12345ABCDEF
+```
+
+Si la clave falta o es incorrecta, el servidor responderá con `401 No autorizado`.
+
+---
 ## 🔍 Endpoints
 
 ### 1. Register New Student
@@ -168,9 +177,9 @@ GET /api/students?career=Engineering
 
 ## 💡 Notes
 
-- All responses are in JSON format.
-- If you modify the students (add/delete), changes are saved automatically to `students.json`.
-- Restarting the server preserves the updated list thanks to JSON persistence.
+- Todas las respuestas están en formato JSON.
+- Si modifica los estudiantes (añadirlos o eliminarlos), los cambios se guardan automáticamente en `students.json`.
+- Al reiniciar el servidor, se conserva la lista actualizada gracias a la persistencia JSON.
 
 ---
 
@@ -180,18 +189,17 @@ GET /api/students?career=Engineering
 Authorization: Bearer 12345ABCDEF
 ```
 
-This must be included in every request.
+Esto debe incluirse en cada solicitud.
 
 ---
 
 # 📖 Educational Objectives
 
-- Practice sending requests to a REST API.
-- Learn about HTTP methods: `GET`, `POST`, `DELETE`.
-- Understand JSON data format.
-- Experience basic server-side persistence.
-- Manage authentication with API keys.
-
+- Practicar el envío de solicitudes a una API REST.
+- Aprender sobre los métodos HTTP: `GET`, `POST`, `DELETE`.
+- Comprender el formato de datos JSON.
+- Experimentar la persistencia básica del lado del servidor.
+- Gestionar la autenticación con claves API.
 ---
 
 **Happy coding! 🚀**

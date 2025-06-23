@@ -1,1 +1,51 @@
-[]
+[
+  {
+    "id": 1,
+    "name": "Pame",
+    "career": "Ciencias de Datos e I.A",
+    "dni": "37013178",
+    "email": "pamelaviviana1993@gmail.com",
+    "password": "contraseña"
+
+  },
+  {
+    "id": 2,
+    "name": "Pame",
+    "career": "Ciencias de Datos e I.A",
+    "dni": "37013178",
+    "email": "pamelaviviana1993@gmail.com",
+    "password": "contraseña"
+  },
+  {
+    "id": 3,
+    "name": "kndg",
+    "career": "Enfermería",
+    "dni": "22331",
+    "email": "kdgdklgnml",
+    "password": "123"
+  },
+  {
+    "id": 4,
+    "name": "juan",
+    "career": "Diseño Gráfico",
+    "dni": "65465454",
+    "email": "juanpf@57",
+    "password": "123456"
+  },
+  {
+    "id": 5,
+    "name": "mauro",
+    "career": "Profesorado en Matemática",
+    "dni": "548455465",
+    "email": "mauro@587",
+    "password": "456789"
+  },
+  {
+    "id": 7,
+    "name": "Luca",
+    "career": "Ciencia de Datos e Inteligencia Artificial",
+    "dni": "54228912",
+    "email": "partynoob@roblox",
+    "password": "123"
+  }
+]

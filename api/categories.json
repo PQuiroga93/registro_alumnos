@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Profesorado"
+  },
+  {
+    "id": 2,
+    "name": "Curso",
+    "description": ""
+  },
+  {
+    "id": 3,
+    "name": "Certificacion Superior"
+  },
+  {
+    "id": 4,
+    "name": "Tecnicatura",
+    "description": ""
+  }
+]
