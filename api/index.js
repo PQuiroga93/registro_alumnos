@@ -5,6 +5,7 @@ const app = express();
 const PORT = 5001;
 
 // API Key ficticia
+//comentarios// 
 const API_KEY = '12345ABCDEF';
 
 // Middleware
