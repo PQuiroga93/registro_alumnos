@@ -1,122 +1,214 @@
+// =======================
+// IMPORTACIÓN DE MÓDULOS
+// =======================
 const express = require('express');
-const cors = require('cors');
 const fs = require('fs');
+const cors = require('cors');
 const app = express();
+
+// =======================
+// CONFIGURACIÓN GENERAL
+// =======================
 const PORT = 5001;
-
-// API Key ficticia
-//comentarios// 
-//nuevo comrntario de prueba
 const API_KEY = '12345ABCDEF';
-
-// Middleware
-//otro comentario 
 app.use(cors());
 app.use(express.json());
 
-// Archivo donde se almacenan los estudiantes
-const STUDENTS_FILE = './students.json';
+// =======================
+// CARGA INICIAL DE ARCHIVOS JSON
+// =======================
+const students = JSON.parse(fs.readFileSync('./students.json', 'utf-8'));
+const careers = JSON.parse(fs.readFileSync('./careers.json', 'utf-8'));
+const categories = JSON.parse(fs.readFileSync('./categories.json', 'utf-8'));
 
-// Función para leer estudiantes desde archivo
-function loadStudents() {
-    try {
-        const data = fs.readFileSync(STUDENTS_FILE, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        console.error("Error loading students, using empty list.", error);
-        return [];
-    }
+// =======================
+// FUNCIONES PARA GUARDAR EN ARCHIVOS
+// =======================
+function saveStudents(data) {
+  fs.writeFileSync('./students.json', JSON.stringify(data, null, 2));
+}
+function saveCareers(data) {
+  fs.writeFileSync('./careers.json', JSON.stringify(data, null, 2));
+}
+function saveCategories(data) {
+  fs.writeFileSync('./categories.json', JSON.stringify(data, null, 2));
 }
 
-// Función para guardar estudiantes en archivo
-function saveStudents(students) {
-    try {
-        fs.writeFileSync(STUDENTS_FILE, JSON.stringify(students, null, 2));
-    } catch (error) {
-        console.error("Error saving students:", error);
-    }
-}
-
-// Inicializar estudiantes
-let students = loadStudents();
-
-// Middleware para validar API Key
+// =======================
+// MIDDLEWARE: AUTORIZACIÓN
+// =======================
 app.use((req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || authHeader !== `Bearer ${API_KEY}`) {
-        return res.status(401).json({ error: 'Unauthorized. Invalid API Key.' });
-    }
-    next();
+  const token = req.headers['authorization'];
+  if (token !== `Bearer ${API_KEY}`) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  next();
 });
 
-// ============================
-// Endpoints
-// ============================
+// =======================
+// RUTAS DE ESTUDIANTES
+// =======================
 
-// Registrar nuevo estudiante
-app.post('/api/students', (req, res) => {
-    const { name, career } = req.body;
-
-    if (!name || !career) {
-        return res.status(400).json({ error: "Missing required fields: name and career." });
-    }
-
-    const newId = students.length ? students[students.length - 1].id + 1 : 1;
-
-    const newStudent = {
-        id: newId,
-        name,
-        career
-    };
-
-    students.push(newStudent);
-    saveStudents(students); // Guardar cambios
-
-    return res.status(201).json({ message: "Student registered successfully.", student: newStudent });
-});
-
-// Consultar estudiante por ID
-app.get('/api/students/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const student = students.find(s => s.id === id);
-
-    if (!student) {
-        return res.status(404).json({ error: "Student not found." });
-    }
-
-    return res.status(200).json(student);
-});
-
-// Consultar estudiantes por carrera
+// Obtener todos los estudiantes
 app.get('/api/students', (req, res) => {
-    const career = req.query.career;
-
-    if (!career) {
-        return res.status(400).json({ error: "Career filter is required." });
-    }
-
-    const filtered = students.filter(s => s.career.toLowerCase() === career.toLowerCase());
-    return res.status(200).json(filtered);
+  res.json(students);
 });
 
-// Eliminar estudiante por ID
+// Obtener estudiante por ID
+app.get('/api/students/:id', (req, res) => {
+  const student = students.find(s => s.id == req.params.id);
+  if (!student) return res.status(404).json({ error: 'Estudiante no encontrado' });
+  res.json(student);
+});
+
+// Crear nuevo estudiante
+app.post('/api/students', (req, res) => {
+  const { name, career, dni, email, password } = req.body;
+  if (!name || !career || !dni || !email || !password) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+  const newId = students.length ? students[students.length - 1].id + 1 : 1;
+  const newStudent = { id: newId, name, career, dni, email, password };
+  students.push(newStudent);
+  saveStudents(students);
+  res.status(201).json({ message: 'Estudiante registrado', student: newStudent });
+});
+
+// Actualizar estudiante
+app.put('/api/students/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, career, dni, email, password } = req.body;
+  const index = students.findIndex(s => s.id === id);
+  if (index === -1) return res.status(404).json({ error: 'Estudiante no encontrado' });
+  students[index] = { id, name, career, dni, email, password };
+  saveStudents(students);
+  res.json({ message: 'Estudiante actualizado', student: students[index] });
+});
+
+// Eliminar estudiante
 app.delete('/api/students/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const index = students.findIndex(s => s.id === id);
-
-    if (index === -1) {
-        return res.status(404).json({ error: "Student not found for deletion." });
-    }
-
-    students.splice(index, 1);
-    saveStudents(students); // Guardar cambios
-
-    return res.status(200).json({ message: "Student deleted successfully." });
+  const index = students.findIndex(s => s.id == req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Estudiante no encontrado' });
+  students.splice(index, 1);
+  saveStudents(students);
+  res.json({ message: 'Estudiante eliminado' });
 });
 
-// ============================
-// Start server
-// ============================
+// =======================
+// RUTAS DE CARRERAS
+// =======================
+
+// Obtener todas las carreras
+app.get('/api/careers', (req, res) => {
+  res.json(careers);
+});
+
+// Obtener carrera por ID
+app.get('/api/careers/:id', (req, res) => {
+  const career = careers.find(c => c.id == req.params.id);
+  if (!career) return res.status(404).json({ error: 'Carrera no encontrada' });
+  res.json(career);
+});
+
+// Crear nueva carrera
+app.post('/api/careers', (req, res) => {
+  const { name, category, description } = req.body;
+  if (!name || !category) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+  const newId = careers.length ? careers[careers.length - 1].id + 1 : 1;
+  const newCareer = { id: newId, name, category, description };
+  careers.push(newCareer);
+  saveCareers(careers);
+  res.status(201).json({ message: 'Carrera creada', career: newCareer });
+});
+
+// Actualizar carrera
+app.put('/api/careers/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, category, description } = req.body;
+  const index = careers.findIndex(c => c.id === id);
+  if (index === -1) return res.status(404).json({ error: 'Carrera no encontrada' });
+  careers[index] = { id, name, category, description };
+  saveCareers(careers);
+  res.json({ message: 'Carrera actualizada', career: careers[index] });
+});
+
+// Eliminar carrera
+app.delete('/api/careers/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const related = students.some(s => s.career === careers.find(c => c.id === id)?.name);
+  if (related) return res.status(409).json({ error: 'Hay alumnos con esta carrera' });
+  const index = careers.findIndex(c => c.id === id);
+  if (index === -1) return res.status(404).json({ error: 'Carrera no encontrada' });
+  careers.splice(index, 1);
+  saveCareers(careers);
+  res.json({ message: 'Carrera eliminada' });
+});
+
+// =======================
+// RUTAS DE CATEGORÍAS
+// =======================
+
+// Obtener todas las categorías
+app.get('/api/categories', (req, res) => {
+  res.json(categories);
+});
+
+// Obtener categoría por ID
+app.get('/api/categories/:id', (req, res) => {
+  const category = categories.find(c => c.id == req.params.id);
+  if (!category) return res.status(404).json({ error: 'Categoría no encontrada' });
+  res.json(category);
+});
+
+// Crear nueva categoría
+app.post('/api/categories', (req, res) => {
+  const { name, description } = req.body;
+  if (!name) return res.status(400).json({ error: 'El nombre es obligatorio' });
+  const newId = categories.length ? categories[categories.length - 1].id + 1 : 1;
+  const newCategory = { id: newId, name, description };
+  categories.push(newCategory);
+  saveCategories(categories);
+  res.status(201).json({ message: 'Categoría creada', category: newCategory });
+});
+
+// Actualizar categoría
+app.put('/api/categories/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, description } = req.body;
+  const index = categories.findIndex(c => c.id === id);
+  if (index === -1) return res.status(404).json({ error: 'Categoría no encontrada' });
+  categories[index] = { id, name, description };
+  saveCategories(categories);
+  res.json({ message: 'Categoría actualizada', category: categories[index] });
+});
+
+// Eliminar categoría
+app.delete('/api/categories/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const related = careers.some(c => c.category === categories.find(cat => cat.id === id)?.name);
+  if (related) return res.status(409).json({ error: 'Hay carreras con esta categoría' });
+  const index = categories.findIndex(c => c.id === id);
+  if (index === -1) return res.status(404).json({ error: 'Categoría no encontrada' });
+  categories.splice(index, 1);
+  saveCategories(categories);
+  res.json({ message: 'Categoría eliminada' });
+});
+
+// =======================
+// LOGIN (VALIDACIÓN BÁSICA)
+// =======================
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  const user = students.find(s => s.email === email && s.password === password);
+  if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
+  res.json({ message: 'Login exitoso', user });
+});
+
+// =======================
+// INICIAR EL SERVIDOR
+// =======================
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
